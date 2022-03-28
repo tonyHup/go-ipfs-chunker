@@ -5,6 +5,7 @@ import (
 	"math/bits"
 
 	pool "github.com/libp2p/go-buffer-pool"
+	privacy "github.com/tonyHup/go-ipfs-privacy"
 )
 
 const (
@@ -37,7 +38,18 @@ func (b *Buzhash) NextBytes() ([]byte, error) {
 		return nil, b.err
 	}
 
-	n, err := io.ReadFull(b.r, b.buf[b.n:])
+    buf1 := make([]byte, buzMax - b.n)
+    n, err := io.ReadFull(b.r, buf1)
+    if n != 0 {
+        buf2, nerr := privacy.Prv.Encrypt(buf1[:n])
+        if nerr == nil {
+            copy(b.buf[b.n:], buf2)
+        } else {
+            return nil, nerr
+        }
+    }
+
+    //n, err := io.ReadFull(b.r, b.buf[b.n:])
 	if err != nil {
 		if err == io.ErrUnexpectedEOF || err == io.EOF {
 			buffered := b.n + n
