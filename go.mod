@@ -1,4 +1,4 @@
-module github.com/ipfs/go-ipfs-chunker
+module github.com/tonyHup/go-ipfs-chunker
 
 require (
 	github.com/ipfs/go-block-format v0.0.2
